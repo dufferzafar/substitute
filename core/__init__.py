@@ -7,12 +7,16 @@ from functools import reduce
 def _I2B(I, fixed_length=None, reverse=False):
     """ Convert an integer into a bit list. """
     if reverse:
+        # LSB first form
         result = [int(bit) for bit in reversed(bin(I)[2:])]
         if fixed_length:
             while len(result) < fixed_length:
                 result.append(0)
     else:
         result = [int(bit) for bit in bin(I)[2:]]
+        if fixed_length:
+            while len(result) < fixed_length:
+                result.insert(0, 0)
     return result
 
 
@@ -24,7 +28,7 @@ def _B2I(B, reverse=False):
         return reduce(lambda x, y: (x << 1) + y, B)
 
 
-def multiply(a, b, reduced):
+def _multiply(a, b, r):
     """
     Multiply two numbers in a finite field.
 
@@ -37,11 +41,11 @@ def multiply(a, b, reduced):
         b >>= 1
         a <<= 1
         if a & 256:
-            a ^= reduced
+            a ^= r
     return p & (256 - 1)
 
 
-def inverse(num, reduced):
+def inverse(num, r):
     """ Find inverse of an element by Brute-force approach. """
     if int(num) == 0:
         return 0
@@ -51,7 +55,7 @@ def inverse(num, reduced):
         # Todo: Use Extended Euclidean Algo
         # or Logs/Anti-Logs
         for i in range(1, 256):
-            if multiply(num, i, reduced) == 1:
+            if _multiply(num, i, r) == 1:
                 return i
 
 
@@ -74,7 +78,7 @@ def pretty(sbox):
     """ Return a pretty printed SBox. """
 
     # List of Columns
-    p = '\n       '
+    p = '\nS-BOX  '
     for i in range(16):
         p += '%02x' % i + '  '
     p += '\n'
