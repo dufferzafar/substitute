@@ -1,6 +1,17 @@
 """ The standard S-Box used in Rijndael. """
 
+# Because the core is present
+# in parent directory.
+from sys import path
+path.insert(1, '..')
+
 import core
+
+from analysis import (
+    differential_probability,
+    non_linearity,
+    algebraic_degree
+)
 
 # Standard parameters
 irreducible_polynomial = 0x11B
@@ -19,5 +30,10 @@ sbox = []
 for i in range(256):
     sbox.append(core.affine(core.inverse(i, reduced), affine_constant))
 
-# Yay!
+# The Box
 print(core.pretty(sbox))
+
+# Analysis
+print("Differential Probability: %d" % differential_probability(sbox))
+# print("Non Linearity: %d" % non_linearity(sbox))
+print("Algebraic Degree: %d" % algebraic_degree(sbox))
