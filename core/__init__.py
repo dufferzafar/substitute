@@ -28,6 +28,15 @@ def _B2I(B, reverse=False):
         return reduce(lambda x, y: (x << 1) + y, B)
 
 
+def _add(a, b):
+    """ Add two numbers by xor-ing them bitwise. """
+
+    # Todo: What if numbers have bigger length than 8
+    a = _I2B(a, fixed_length=8)
+    b = _I2B(b, fixed_length=8)
+    return _B2I([i ^ j for i, j in zip(a, b)])
+
+
 def _multiply(a, b, r):
     """
     Multiply two numbers in a finite field.
@@ -59,19 +68,16 @@ def inverse(num, r):
                 return i
 
 
-def affine(b, c):
-    """ Affine Transformation. """
-    # Convert the integers to a list of bits
-    # each of length 8, in LSB first form.
-    # So, 13 becomes [1, 0, 1, 1, 0, 0, 0, 0]
-    b, c, d = _I2B(b, 8, True), _I2B(c, 8, True), _I2B(b, 8, True)
+def affine(a, u, v):
+    """
+    Affine Transformation.
 
-    # Apply the affine transformation
-    for i in range(8):
-        d[i] ^= b[(i+4) % 8] ^ b[(i+5) % 8] ^ b[(i+6) % 8] ^ b[(i+7) % 8] ^ c[i]
+    b(x) = u(x) * a(x) + v(x)
 
-    # Return the result back as an integer
-    return _B2I(d, True)
+    http://www.ijicic.org/ijicic-10-01041.pdf
+    """
+
+    return _add(_multiply(a, u, 257), v)
 
 
 def pretty(sbox):
