@@ -80,26 +80,29 @@ def affine(a, u, v):
     return _add(_multiply(a, u, 257), v)
 
 
-def pretty(sbox):
+def pretty(sbox, border=True):
     """ Return a pretty printed SBox. """
 
-    # List of Columns
-    p = '\nS-BOX  '
-    for i in range(16):
-        p += '%02x' % i + '  '
-    p += '\n'
+    p = ''
+    if border:
+        # List of Columns
+        p += '     '
+        for i in range(16):
+            p += '%02x' % i + ' '
+        p += '\n'
 
-    for i in range(70):
-        p += '-'
-    p += '\n'
+        for i in range(52):
+            p += '-'
+        p += '\n'
 
     # Row
     for i in range(16):
-        p += '%02x' % i + '  |  '
+        if border:
+            p += '%02x' % i + ' | '
 
         # Entries
         for j in range(16):
-            p += '%02x' % sbox[16*i+j] + '  '
+            p += '%02x' % sbox[16*i+j] + ' '
         p += '\n'
 
     return p.upper()
