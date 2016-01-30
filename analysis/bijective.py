@@ -1,17 +1,22 @@
 """ Bijectivity of a an SBox. """
 
 
-def is_bijective(sbox):
+def indices(lst, item):
+    """Return all indices in lst where item occurs."""
+    return [i for i, x in enumerate(lst) if x == item]
 
+
+def is_bijective(sbox):
+    """Check whethter an sbox is bijective."""
     missing = []
     for i in range(len(sbox)):
-        if i not in sbox:
-            missing.append(hex(i))
+        if sbox.count(i) != 1:
+            missing.append({i: indices(sbox, i)})
 
     if missing:
         return False, missing
     else:
-        return True
+        return True, []
 
 
 if __name__ == '__main__':
